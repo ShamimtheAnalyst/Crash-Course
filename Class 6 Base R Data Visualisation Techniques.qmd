@@ -1,0 +1,310 @@
+---
+title: "Base R Visualizations"
+author: "Abdullah Al Shamim"
+format: docx
+editor: visual
+---
+
+## Base R Visuals Step-by-Step Guide
+
+## 1. Scatter Plot
+
+### Step 1: Basic Scatter Plot
+
+প্রথম ধাপে, আমরা mtcars ডেটাসেটের `mpg` (মাইলেজ) ও `wt` (ওজন) ব্যবহার করে একটি সাধারণ স্ক্যাটার প্লট তৈরি করবো।
+
+```{r}
+
+# Basic Scatter Plot
+plot(mtcars$wt, mtcars$mpg,
+     main = "Basic Scatter Plot of MTCARS",
+     xlab = "Weight (1000 lbs)",
+     ylab = "Miles Per Gallon (MPG)")
+
+```
+
+এখানে `mtcars` ডেটাসেটের ওজন এবং মাইলেজ ব্যবহার করে একটি সাধারণ প্লট তৈরি করা হয়েছে।
+
+### Step 2: Color Customization
+
+এবার আমরা প্লটে **পর্পল রঙ** যোগ করবো, যাতে ডেটাপয়েন্টগুলো আরও দৃশ্যমান হয়।
+
+```{r}
+
+# Scatter Plot with Color
+plot(mtcars$wt, mtcars$mpg,
+     main = "Scatter Plot with Color",
+     xlab = "Weight (1000 lbs)",
+     ylab = "Miles Per Gallon (MPG)",
+     pch = 16,    
+     col = "purple")
+
+```
+
+এখানে `pch = 16` দিয়ে পয়েন্টগুলোকে সলিড ডটে রূপান্তর করা হয়েছে এবং **পর্পল রঙ** দিয়ে আরও আকর্ষণীয় করা হয়েছে।
+
+### Step 3: Add Regression Line
+
+স্ক্যাটার প্লটে একটি **রিগ্রেশন লাইন** যুক্ত করে ডেটার ট্রেন্ড বা সম্পর্ক আরও পরিষ্কারভাবে দেখানো যায়।
+
+```{r}
+
+# Scatter Plot with Regression Line
+plot(mtcars$wt, mtcars$mpg,
+     main = "Scatter Plot with Regression Line",
+     xlab = "Weight (1000 lbs)",
+     ylab = "Miles Per Gallon (MPG)",
+     pch = 16,
+     col = "purple")
+
+# Add regression line
+abline(lm(mpg ~ wt, data = mtcars), 
+       col = "red", 
+       lwd = 2)
+
+```
+
+এখানে `abline()` ফাংশন দিয়ে একটি রিগ্রেশন লাইন যুক্ত করা হয়েছে, যা **পর্পল রঙে** এবং `lwd = 2` width সেট করা হয়েছে। এই লাইনটি ওজন এবং মাইলেজের মধ্যে সম্পর্ক দেখায়।
+
+### Step 4: Add Grid Lines
+
+গ্রিডলাইন যুক্ত করে প্লটটি আরও পরিষ্কার ও পঠনযোগ্য করা যায়।
+
+```{r}
+
+# Scatter Plot with Grid Lines
+plot(mtcars$wt, mtcars$mpg,
+     main = "Scatter Plot with Grid Lines",
+     xlab = "Weight (1000 lbs)",
+     ylab = "Miles Per Gallon (MPG)",
+     pch = 16,
+     col = "purple")
+
+# Add regression line
+abline(lm(mpg ~ wt, data = mtcars), 
+          col = "red", 
+          lwd = 2)
+
+# Add grid lines
+grid()
+
+```
+
+এখানে `grid()` ফাংশন ব্যবহার করে গ্রিডলাইন যুক্ত করা হয়েছে, যা ডেটার সাথে সম্পর্ক বোঝাতে সহায়ক।
+
+### Step 5: Add Text Labels
+
+প্রতিটি পয়েন্টের পাশে গাড়ির নাম যোগ করে প্লটটিকে আরও তথ্যবহুল করা যায়।
+
+```{r}
+
+# Scatter Plot with Labels
+plot(mtcars$wt, mtcars$mpg,
+     main = "Scatter Plot with Labels",
+     xlab = "Weight (1000 lbs)",
+     ylab = "Miles Per Gallon (MPG)",
+     pch = 16,
+     col = "purple")
+
+# Add regression line
+abline(lm(mpg ~ wt, data = mtcars), 
+       col = "red", 
+       lwd = 2)
+
+# Add grid lines
+grid()
+
+# Add labels
+text(mtcars$wt, mtcars$mpg, 
+     labels = rownames(mtcars), 
+     pos = 4, 
+     cex = 0.7)
+
+```
+
+`text()` ফাংশন দিয়ে প্রতিটি পয়েন্টের পাশে গাড়ির নাম যুক্ত করা হয়েছে, যা প্লটটিকে আরও তথ্যবহুল করে তোলে। `pos = 4` মানে প্রতিটি লেবেল পয়েন্টের ডান পাশে থাকবে এবং `cex = 0.7` সেট করে লেবেলের সাইজ ছোট করা হয়েছে।
+
+### Step 6: Add Custom Legends
+
+একটি লেজেন্ড যুক্ত করে ব্যবহারকারীকে প্লটের বিভিন্ন কম্পোনেন্টের অর্থ বোঝানো যায়।
+
+```{r}
+
+# Scatter Plot with Legend
+plot(mtcars$wt, mtcars$mpg,
+     main = "Scatter Plot with Legend",
+     xlab = "Weight (1000 lbs)",
+     ylab = "Miles Per Gallon (MPG)",
+     pch = 16,
+     col = "purple")
+
+# Add regression line
+abline(lm(mpg ~ wt, data = mtcars), 
+       col = "red", 
+       lwd = 2)
+
+# Add grid lines
+grid()
+
+# Add labels
+text(mtcars$wt, mtcars$mpg, 
+     labels = rownames(mtcars), 
+     pos = 4, 
+     cex = 0.7)
+
+# Add legend
+legend("topright", 
+       legend = c("Data Points", "Regression Line"),
+       col = c("purple", "red"), 
+       pch = c(16, NA), 
+       lty = c(NA, 1), 
+       lwd = c(NA, 2))
+
+```
+
+এই লেজেন্ডটি `topright` পজিশনে যুক্ত করা হয়েছে। এতে ডেটা পয়েন্ট এবং রিগ্রেশন লাইনের অর্থ বোঝানো হয়েছে। `lty` এবং `lwd` সেটিংস দিয়ে লাইন এবং পয়েন্টের জন্য বিভিন্ন স্টাইল ব্যবহার করা হয়েছে।
+
+## 2. Line Plot (লাইন প্লট)
+
+```{r}
+
+
+head(Orange)
+
+# Line Plot
+plot(Orange$age, Orange$circumference, 
+     type = "o",              # পয়েন্টের সাথে লাইন
+     main = "Line Plot of Age vs Circumference",
+     xlab = "Age (days)",
+     ylab = "Circumference (mm)",
+     col = "purple",          
+     pch = 16)              
+
+```
+
+### প্রতিটি গাছের জন্য আলাদা রঙে লাইন প্লট তৈরি
+
+```{r}
+
+# আলাদা রঙ সেট করা প্রতিটি গাছের জন্য
+colors <- c("purple", "steelblue", "violet", "skyblue", "orange")
+
+# বেসিক প্লট তৈরি
+plot(Orange$age[Orange$Tree == 1], Orange$circumference[Orange$Tree == 1], 
+     type = "o", 
+     main = "Line Plot of Age vs Circumference by Tree Type",
+     xlab = "Age (days)",
+     ylab = "Circumference (mm)",
+     col = colors[1],
+     pch = 16,
+     ylim = range(Orange$circumference)) # y-axis এর পরিসীমা
+
+# প্রতিটি গাছের জন্য আলাদা লাইন যোগ করা
+for(i in 2:5) {
+  lines(Orange$age[Orange$Tree == i], Orange$circumference[Orange$Tree == i],
+        type = "o", 
+        col = colors[i], 
+        pch = 16)
+}
+
+
+# লেজেন্ড যোগ করা প্রতিটি গাছের জন্য
+legend("topleft", 
+       legend = paste("Tree", 1:5),
+       col = colors, 
+       pch = 16, 
+       lty = 1, 
+       cex = 0.8)
+
+```
+
+## 3. **Bar Plot (বার প্লট)**
+
+```{r}
+
+# ডেটা তৈরি
+bar_data <- table(mtcars$cyl)
+
+# Bar Plot
+barplot(bar_data,
+        main = "Bar Plot of Cylinder Counts",
+        xlab = "Number of Cylinders",
+        ylab = "Frequency",
+        col = "#d580ff",      
+        border = "#d580ff")
+
+```
+
+## 4. **Histogram (হিস্টোগ্রাম)**
+
+```{r}
+
+# Histogram of MPG
+hist(mtcars$mpg,
+     main = "Histogram of Miles Per Gallon",
+     xlab = "Miles Per Gallon (MPG)",
+     ylab = "Frequency",
+     col = "#d580ff",        
+     border = "black")  
+
+```
+
+## 5. **Box Plot (বক্স প্লট)**
+
+```{r}
+
+# Box Plot of MPG by Cylinder
+boxplot(mpg ~ cyl, data = mtcars,
+        main = "Box Plot of MPG by Cylinder",
+        xlab = "Number of Cylinders",
+        ylab = "Miles Per Gallon (MPG)",
+        col = "#d580ff",       
+        border = "black")    
+
+```
+
+## 6. **Pie Chart (পাই চার্ট)**
+
+```{r}
+
+# Pie Chart of Cylinder Counts
+pie_data <- table(mtcars$cyl)
+
+pie(pie_data,
+    main = "Pie Chart of Cylinder Counts",
+    col = c("#5f008f", "#d580ff", "#eabfff"),
+    labels = paste(names(pie_data), "Cylinders"))
+
+```
+
+## 7. **Density Plot (ডেনসিটি প্লট)**
+
+```{r}
+
+# Density Plot of MPG
+plot(density(mtcars$mpg),
+     main = "Density Plot of Miles Per Gallon",
+     xlab = "Miles Per Gallon (MPG)",
+     col = "black",          
+     lwd = 2) 
+
+# Fill area under curve
+polygon(density(mtcars$mpg), 
+        col = "#eabfff", 
+        border = "black")
+
+```
+
+## 8. **Pairs Plot (পেয়ার্স প্লট)**
+
+```{r}
+
+# Pairs Plot
+pairs(mtcars[ , c("mpg", "wt", "hp", "disp")],
+      main = "Pairs Plot of MPG, Weight, HP, and Displacement",
+      pch = 16, 
+      col = "#d580ff")
+
+```
+
+এই টিউটোরিয়ালে আমরা **Base R** ব্যবহার করে বিভিন্ন ধরনের **সাধারণ প্লট ও গ্রাফ** তৈরি এবং কাস্টমাইজ করা শিখেছি। এই প্লটগুলো ডেটা ভিজ্যুয়ালাইজেশনের জন্য বহুল ব্যবহৃত এবং প্রাথমিক বিশ্লেষণে গুরুত্বপূর্ণ। আশা করি এই ভিডিওটি আপনার **R প্রোগ্রামিং** এবং **ডেটা ভিজ্যুয়ালাইজেশন** দক্ষতা বৃদ্ধিতে সহায়ক হবে।

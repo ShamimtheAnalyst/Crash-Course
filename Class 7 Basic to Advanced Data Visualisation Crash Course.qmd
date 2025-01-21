@@ -1,0 +1,192 @@
+---
+title: "Crash Course: Data Visualization"
+author: "Abdullah Al Shamim"
+format: html
+editor: visual
+---
+
+# **Data Visualization**
+
+### font
+
+```{r}
+
+library(showtext)
+library(sysfonts)
+
+# Add the Google font "Poppins"
+font_add_google("Poppins", "poppins")
+
+# Enable showtext to use Google fonts in plots
+showtext_auto()
+```
+
+### Require Library
+
+```{r}
+
+library(tidyverse)
+```
+
+### Understanding Iris Data-set Variables
+
+![](images/1_ZK9_HrpP_lhSzTq9xVJUQw.png)
+
+### Histograms:
+
+```{r}
+
+iris %>% 
+  ggplot(aes(Sepal.Length)) + 
+  geom_histogram(fill = "steelblue", 
+                 color = "white") +
+  theme_test()
+```
+
+### Bar Chart:
+
+```{r}
+
+gss_cat %>%   
+  ggplot(aes(marital)) +   
+  geom_bar(fill = "skyblue",
+           color = "black") +   
+  theme_test() +
+  labs(title = "Bar Chart",
+       x = "Marital Status")
+```
+
+### Box Plots:
+
+```{r}
+
+chickwts %>%    
+  ggplot(aes(weight, feed, fill = feed)) + #color = feed   
+  geom_boxplot(alpha = 0.6) +   
+  theme_test(base_size = 15) +   
+  labs(title = "Chicken Weight Data Summary",
+       x = "Chicken Weight",
+       y = "Chicken Feed Types")
+```
+
+### Time-series:
+
+```{r}
+
+economics %>% 
+  drop_na() %>% 
+  ggplot(aes(date, psavert)) +
+  geom_line(color = "steelblue", 
+            size = 1) +
+  theme_test(base_size = 15) +
+  labs(
+    title = "Time Series of Personal Savings Rate",
+    subtitle = "Personal Savings Rate Over Time",
+    x = "Year",
+    y = "Personal Savings Rate (%)")
+```
+
+### 
+
+### Understanding Penguins Data-set Variables
+
+![](images/lter_penguins.png)
+
+### Scatter Plots:
+
+```{r}
+
+library(palmerpenguins)
+
+penguins %>% 
+  drop_na(body_mass_g, flipper_length_mm) %>% 
+  ggplot(aes(flipper_length_mm,
+             body_mass_g)) +
+  geom_point(aes(color = species),
+             alpha = 0.7,
+             size = 4) +
+  theme_test(base_size = 15) +
+  labs(title = "Scatter plot",
+    subtitle = "Flipper Length vs Body Mass",
+    caption = "www.shikhao.com.bd",
+    x = "Flipper Length (mm)",
+    y = "Body Mass (g)") +
+  theme(
+    plot.title = element_text(hjust = 0.5, 
+                              face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    #legend.position = "top")
+```
+
+### Linear Regression plot:
+
+```{r}
+
+library(palmerpenguins)
+
+penguins %>% 
+  drop_na(body_mass_g, flipper_length_mm) %>% 
+  ggplot(aes(flipper_length_mm, body_mass_g)) +
+  geom_point(aes(color = species),
+             alpha = 0.7,
+             size = 3) +
+  scale_color_manual(values = 
+                c("Adelie" = "#d48ce1",  
+                  "Chinstrap" = "#a139ca",          
+                  "Gentoo" = "#6d2683")) +
+  geom_smooth(method = "lm", 
+              se = TRUE, 
+              color = "red",
+              alpha = 0.6) +
+  theme_test(base_size = 15) +  
+  labs(title = "Simple Linear Regression",
+    subtitle = "Flipper Length vs Body Mass",
+    caption = "www.shikhao.com.bd",
+    x = "Flipper Length (mm)",
+    y = "Body Mass (g)") +
+  theme(plot.title = element_text(face = "bold", 
+                              hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", 
+                              hjust = 0.5),
+    legend.position = c(0.11, 0.78)) + 
+  facet_wrap(~species)
+```
+
+### Advanced ggplot2 customization:
+
+```{r}
+
+library(car)
+
+Salaries %>%
+  filter(salary < 220000) %>% 
+  ggplot(aes(rank, salary,
+             fill = sex)) +
+  geom_boxplot(alpha = 0.5) +
+  theme_test(base_size = 15) +
+  labs(title = "Faculty Salary by Rank",
+       subtitle = "Differentiated by Gender",
+       caption = "Source: Salaries dataset",
+       x = "",
+       y = "",
+       fill = "Gender") +
+  theme(plot.title = element_text(face = "bold", 
+                              hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", 
+                              hjust = 0.5),
+    legend.position = c(0.11, 0.78),
+    axis.text.x = element_text(angle = 45,
+                                   vjust = 1,
+                                   hjust = 1)) +
+  scale_x_discrete(breaks = c(
+    "AsstProf", "AssocProf", "Prof"),
+                   labels = c("Assistant\nProffessor", 
+                              "Associate\nProffessor", 
+                              "Proffessor")) +
+  scale_y_continuous(breaks = c(50000, 100000, 
+                                150000, 200000),
+                     labels = c("$50k", "$100k", 
+                                "$150k", "$200k"))
+  #facet_grid(sex ~ rank)
+
+```

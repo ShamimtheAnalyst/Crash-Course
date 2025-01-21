@@ -1,0 +1,506 @@
+---
+title: "R programming Crash Course"
+author: "Abdullah Al Shamim"
+format: html
+editor: visual
+---
+
+## **Section 1: Introduction to R Programming**
+
+### **1.1 The Four Quadrants in RStudio**
+
+| Shift + Ctrl + 1 Zoom Source
+| Shift + Ctrl + 2 Zoom Console
+| Shift + Ctrl + 3 Zoom Help
+| Shift + Ctrl + 4 Zoom History
+| Shift + Ctrl + 8 Zoom Environment
+
+### **1.2 How to Get Help in R**
+
+**Use the ? or help() functions:**
+
+```{r}
+
+?mean  
+
+help(cars)
+```
+
+### 1.3 Objects and Functions in R
+
+**Create variables:**
+
+```{r}
+
+x <- 7  
+y <- 30 
+
+x + y  
+
+sum(x, y)
+```
+
+**Create data frames:**
+
+```{r}
+
+names <- c("Mushfiq", "Riyad", "Tamim") 
+
+ages <- c(32, 36, 33) 
+
+friends <- data.frame(names, ages) 
+
+friends
+```
+
+**Access data:**
+
+```{r}
+
+friends$ages 
+
+friends[1, 1] 
+
+friends[1, ] 
+
+friends[ , 1] 
+```
+
+## **Section 2: Exploring Data in R**
+
+### **2.1 Built-in Data Sets**
+
+```{r}
+
+data()  
+
+View(iris)
+```
+
+### 2.4 Installing and using package
+
+```{r}
+
+#install.packages("tidyverse")
+
+library(tidyverse)
+```
+
+### 2.2 Checking Data Structure and Types
+
+**Useful functions:**
+
+```{r}
+
+head(msleep, 10)    
+
+tail(msleep)
+
+str(msleep) 
+
+class(msleep)  
+
+dim(msleep)
+
+unique(msleep$vore)
+```
+
+**Get rid off data set name**
+
+```{r}
+
+attach(msleep)
+
+unique(vore)
+
+class(vore)
+```
+
+### 2.3 Handling Missing Data
+
+```{r}
+
+No_missing <- complete.cases(msleep)  
+
+missing <- !complete.cases(msleep)  
+
+View(msleep[missing, ])
+```
+
+### 2.4 Data **Exploration** Example
+
+```{r}
+
+msleep %>%   
+  
+  filter(bodywt < 150 & vore == "omni") %>%  
+  
+  mutate(Body_Weight = bodywt / 1000) %>%  
+  
+  select(Body_Weight, sleep_total) %>%   
+  
+  arrange(sleep_total) %>%      
+  
+  plot()                                      
+```
+
+## Section 3: Data Cleaning
+
+### 3.1 Selecting and Reordering Variables
+
+```{r}
+
+view(starwars)
+
+starwars %>% select(name, height, mass)  
+
+starwars %>% select(1:3)
+
+starwars %>% select(ends_with("Color"))
+
+starwars %>% 
+  select(name, height, mass, everything())
+```
+
+### 3.2 Changing Variable Names and Types
+
+```{r}
+
+starwars %>% rename(character = name)  
+
+class(starwars$sex)  
+
+
+starwars$sex <- as.factor(starwars$sex)
+```
+
+**Restore Variable Types**
+
+```{r}
+
+starwars$sex <- as.character(starwars$sex) 
+
+class(starwars$sex)  
+```
+
+### **3.3 Filtering Rows**
+
+```{r}
+
+starwars %>% 
+  filter(mass < 55 & sex == "male") %>% 
+  select(name, mass, sex)
+```
+
+### 3.4 Changing factor levels
+
+```{r}
+
+sw <- starwars %>%
+  mutate(as.factor(sex)) %>% 
+  mutate(sex = factor(sex, 
+                      levels = c("male",
+                                 "female",
+                                 "hermaphroditic",
+                                 "none"))) 
+
+levels(sw$sex)
+```
+
+### 3.5 Data re-code
+
+```{r}
+
+starwars %>%    
+  mutate(sex = recode(sex,
+                      "male" = "man",               
+                      "female" = "woman")) %>% 
+  select(name, sex)
+```
+
+### **3.6 Dealing with Duplicates**
+
+```{r}
+
+names <- c("Tamim", "Mushfiq", "Riyad", "Tamim")
+age <- c(32, 33, 36, 32)
+
+Cricketers <- data.frame(names, age)
+Cricketers
+
+
+Cricketers %>% distinct()
+```
+
+### 3.7 Example: Data Cleaning with `starwars` Data
+
+```{r}
+
+sw <- starwars %>%
+
+  rename(planet = homeworld) %>%
+
+  select(name, height, mass, everything()) %>% 
+
+  mutate(sex = as.factor(sex)) %>%
+
+  filter(species == "Human", 
+         !is.na(height), 
+         !is.na(mass)) %>%
+
+  mutate(sex = recode(sex,
+                      "male" = "man",               
+                      "female" = "woman")) %>% 
+
+  mutate(planet = if_else(is.na(planet), 
+                          "Unknown", planet)) %>%
+
+  distinct() %>%
+  
+  select(name, height, mass, sex, planet)
+
+
+view(sw)
+```
+
+------------------------------------------------------ part ii ------------------------------------------------------------------------------
+
+## Section 4: Data Manipulation
+
+### 4.1 Creating or Changing Variables
+
+```{r}
+
+starwars %>% 
+  mutate(Height = height / 100) %>% 
+  select(name, height, Height)
+```
+
+### 4.2 Dealing with Categorical data
+
+**Re-leveling factors in the sex column**
+
+```{r}
+
+starwars %>% 
+  mutate(sex = fct_relevel(sex,
+                           "male",
+                           "female",
+                           "hermaphroditic",
+                           "none",
+                           "NA")) %>% 
+  count(sex)
+```
+
+**Arranging factors in descending order based on frequency**
+
+```{r}
+
+starwars %>%
+  #drop_na(sex)
+  mutate(sex = fct_infreq(sex)) %>%
+  count(sex) 
+```
+
+**Arranging factors in ascending order based on frequency**
+
+```{r}
+
+starwars %>%
+  #drop_na(sex) %>% 
+  mutate(sex = fct_infreq(sex)) %>% 
+  mutate(sex = fct_rev(sex)) %>% 
+  count(sex)
+```
+
+### 4.4 Conditional Change (if_else)
+
+```{r}
+
+starwars %>%    
+  mutate(Height = height/100) %>%    
+  mutate(tallness = if_else(Height < 1, "short",                                 "tall")) %>% 
+  select(name, height, Height)
+```
+
+### 4.5 Text Manipulation
+
+```{r}
+
+first_name <- "Data"
+last_name <- "Science"
+
+str_c(first_name, last_name, sep = " ")
+```
+
+### 4.6 Example: Data Manipulation with `starwars` 
+
+```{r}
+
+starwars %>%
+
+  mutate(bmi = mass / (height / 100)^2,  
+         
+         bmi_profile = if_else(bmi < 25, "Normal",
+                                       "Obese")) %>%
+  
+
+  filter(!is.na(bmi) & species == "Human") %>%  
+
+  count(bmi_profile, sex) %>%  
+  
+
+  arrange(desc(n)) %>%
+  
+
+  head(starwars, 7)
+```
+
+## Section 5: Descriptive Statistics
+
+### **5.1 Summarizing Data**
+
+```{r}
+
+summary(msleep$awake)  
+```
+
+**more than one variables**
+
+```{r}
+
+msleep %>%    
+  select(awake, sleep_total) %>%    
+  summary()
+```
+
+**summarizing the data**
+
+```{r}
+
+msleep %>% 
+  drop_na(vore) %>% 
+  group_by(vore) %>% 
+  summarise(Average = mean(sleep_total)) %>% 
+  arrange(Average) %>%
+  head()
+```
+
+### 5.2 Data variance
+
+```{r}
+
+var(msleep$awake)
+```
+
+### 5.3 Creating Tables
+
+```{r}
+
+table(msleep$vore)  
+```
+
+**more than one variables**
+
+```{r}
+
+msleep %>%    
+  select(vore, order) %>%    
+  filter(order %in% c("Carnivora", "Primates")) %>%   table()
+```
+
+### 5.4 Descriptive Statistics for the `msleep`
+
+```{r}
+
+ms_stat <- msleep %>%
+  # Summarize statistics for Sleep Total variable
+  summarise(
+    total_observations = n(),                       
+    Mean = mean(sleep_total, 
+                            na.rm = TRUE), 
+    Median = median(sleep_total, 
+                                na.rm = TRUE), 
+    SD = sd(sleep_total, 
+                        na.rm = TRUE),     
+    Min = min(sleep_total, 
+                          na.rm = TRUE),   
+    Max = max(sleep_total, 
+                          na.rm = TRUE)   
+    )
+
+
+tail(ms_stat)
+```
+
+## Section 6: General Errors 
+
+### 6.1 Syntax Errors
+
+**Example: Missing Parenthesis**
+
+```{r}
+
+mean(1, 2, 3 
+```
+
+**Fix:**
+
+```{r}
+
+mean(c(1, 2, 3))
+```
+
+### 2. Object Not Found
+
+```{r}
+
+print(my_data)
+```
+
+**Fix:**
+
+```{r}
+
+my_data <- cars
+print(my_data)
+
+```
+
+### 3. Unexpected Data Type
+
+```{r}
+
+mean("abc")
+```
+
+#### **Fix:**
+
+```{r}
+
+mean(as.numeric(c(1, 2, 3)))
+```
+
+#### 4. NA or NaN Errors
+
+```{r}
+
+x <- c(1, 2, NA, 4)
+
+sum(x)
+```
+
+### 6. Package Not Installed or Loaded
+
+```{r}
+
+library(agricole)
+```
+
+**Fix:**
+
+```{r}
+
+#install.packages("agricole")
+library(agricole)
+```

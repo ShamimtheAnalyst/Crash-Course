@@ -1,0 +1,328 @@
+---
+title: "Crash Course: Data Analysis"
+author: "Abdullah Al Shamim"
+format: html
+editor: visual
+---
+
+## **Data Analysis**
+
+| Hypothesis testing
+| T-Test
+| ANOVA
+| Chi-squared
+| Simple Linear model and Predictive modeling
+
+### font
+
+```{r}
+
+
+# Load Required Libraries
+library(showtext)
+library(sysfonts)
+library(gapminder)
+library(plyr)
+library(ggpubr)
+
+# Add Google Font for Enhanced Visuals
+font_add_google("Poppins", "poppins")
+showtext_auto()
+
+# Set Theme for Consistency
+default_theme <- theme_test(base_size = 15) +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = "top")
+```
+
+### Require Library
+
+```{r}
+
+library(tidyverse)
+```
+
+## Hypothesis Testing
+
+### T-Test
+
+### A quick look at the data-set
+
+```{r}
+
+head(gapminder, 8)
+```
+
+### 
+
+### T-test Visualization
+
+Visualize Life Expectancy Distribution (Americas vs Asia)
+
+```{r}
+
+library(gapminder)
+
+df <- gapminder %>%
+  select(continent, lifeExp) %>%
+  filter(continent %in% c("Americas", "Asia"))
+
+mu <- ddply(df, "continent", summarise, 
+            grp.mean = mean(lifeExp))
+
+df %>%
+  ggplot(aes(lifeExp, 
+             fill = continent)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c(
+                         "Americas" = "#8C52FF", 
+                         "Asia" = "#CB6CE6")) +
+  geom_vline(data = mu, aes(xintercept = grp.mean), linetype = "dashed", 
+             linewidth = 1, 
+             alpha = 0.5) +
+  annotate("text", 
+           x = 46, 
+           y = 0.045,
+           label = "Mean in Americas = 64.65",                 color = "black",            
+           size = 4) +
+  geom_segment(x = 64.6, 
+               y = 0.033,
+               xend = 55.7, 
+               yend = 0.044,
+               arrow = arrow(length = unit(
+               0.7, "cm")),
+               color = "black",
+               size = 0.7) +
+  annotate("text", x = 40, y = 0.03,
+           label = "Mean in Asia = 60.06",          
+           color = "black",
+           size = 4) +
+  geom_segment(x = 60, y = 0.02,
+               xend = 48, yend = 0.03,
+               arrow = arrow(length = unit(
+               0.7, "cm")),
+               color = "black",
+               size = 0.7) +
+  labs(title = "Life Expectancy Between Americas and Asia", 
+       x = "Life Expectancy", 
+       y = "Density") +
+  default_theme
+```
+
+### Perform Two-Sample t-Test
+
+```{r}
+
+gapminder %>%    
+  filter(continent %in% c("Americas", "Asia")) %>%
+  t.test(lifeExp ~ continent, data = .,          
+         alternative = "two.sided")
+```
+
+## Analysis of Variance (ANOVA Test)
+
+### A quick look at the data-set
+
+```{r}
+
+library(palmerpenguins)
+
+head(penguins, 8)
+```
+
+### ANOVA Analysis
+
+Flipper Length Across Penguin Species
+
+```{r}
+
+penguins %>%    
+  aov(flipper_length_mm ~ species, data = .) %>%    
+  summary()
+```
+
+### Post-Hoc Test: Tukey-HSD
+
+```{r}
+
+penguins %>%    
+  aov(flipper_length_mm ~ species, data = .) %>% 
+  TukeyHSD()
+```
+
+### Tukey-HSD Test Visualization
+
+```{r}
+
+library(palmerpenguins)
+library(ggpubr)
+
+penguins %>%
+  drop_na() %>%
+  ggplot(aes(species, flipper_length_mm, fill = species)) +
+  geom_boxplot(alpha = 0.6) +
+  stat_compare_means(method = "anova", label.y = 250) +
+  stat_compare_means(comparisons = list(
+    c("Adelie", "Chinstrap"), c("Adelie", "Gentoo"), c("Chinstrap", "Gentoo")), method = "t.test") +
+  labs(title = "Flipper Length Comparison Across Penguin Species",
+       subtitle = "One-way ANOVA test result",
+         x = "Species", 
+       y = "Flipper Length (mm)") +
+  scale_fill_manual(values = c("#8C52FF", "#CB6CE6", "#FFD700")) +
+  default_theme
+```
+
+## Chi-Squared Tests
+
+### A quick look at the data
+
+```{r}
+
+head(iris, 9)
+```
+
+### Data preparation
+
+```{r}
+
+flower <- iris %>%    
+  mutate(size = cut(Sepal.Length,                   
+                    breaks = 3,                     
+                    labels = c("Small",           
+                               "Medium",            
+                               "Large"))) %>%   
+  select(Species, size)    
+
+flower
+```
+
+### i) Chi-Squared Goodness of Fit Test
+
+```{r}
+
+flower %>%    
+  select(size) %>%    
+  table() %>% 
+  chisq.test()
+```
+
+### Goodness of Fit Test Visualization
+
+```{r}
+
+flower <- iris %>%    
+  mutate(size = cut(Sepal.Length,                   
+                    breaks = 3,                     
+                    labels = c("Small",           
+                               "Medium",            
+                               "Large"))) %>%   
+  select(Species, size)    
+
+flower
+
+
+flower %>%
+  ggplot(aes(size)) +
+  geom_bar(fill = "#8C52FF", alpha = 0.6) +
+  labs(title = "Chi-Squared Goodness of Fit Test", subtitle = "Proportion of Flowers by Size") +
+  default_theme
+```
+
+### ii) Chi-Squared Test of Independence
+
+```{r}
+
+flower %>%    
+  table() %>%    
+  chisq.test()
+```
+
+### Chi-Squared Test of Independence Visualization
+
+```{r}
+
+flower <- iris %>%    
+  mutate(size = cut(Sepal.Length,                   
+                    breaks = 3,                     
+                    labels = c("Small",             
+                               "Medium",            
+                               "Large"))) %>%   
+  select(Species, size)    
+
+flower
+
+
+flower %>%   
+  ggplot(aes(size, fill = Species)) +   
+  geom_bar(alpha = 0.7) +   
+  labs(title = "Chi-Squared Test of Independence",        
+       subtitle = "Iris by Species and Size",        
+       x = "Size",        
+       y = "Count") +   
+  theme_test(base_size = 15) +   
+  scale_fill_manual(values = c(
+                      "setosa" = "#E2A7F1",                               "versicolor" = "#CB6CE6",                           "virginica" = "#A751C2")) +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+```
+
+## Simple Linear Regression Model
+
+### A quick look at the data
+
+```{r}
+
+head(cars, 7)
+```
+
+### Create a model and it's summary
+
+```{r}
+
+model <- cars %>%    
+  lm(dist ~ speed, data = .)
+
+summary(model) 
+```
+
+### Result Visualization
+
+```{r}
+
+ggplot(cars, aes(speed, dist)) +
+  geom_point(position = "jitter", 
+             size = 3, 
+             color = "#8C52FF") +
+  geom_smooth(method = "lm", 
+              color = "#FFD700", 
+              se = FALSE, 
+              size = 1.2) +
+  annotate("text", x = 8, 
+           y = 95, 
+           label = "Dist = 3.93*speed - 17.58\nY-intercept = -17.5\nSlope = 3.9\np = 1.49e-12\nR^2 = 0.65", 
+           color = "black", 
+           size = 4) +
+  labs(title = "Simple Linear Regression Model", subtitle = "Relationship Between Speed and Stopping Distance", 
+       x = "Speed of Car", 
+       y = "Distance to Stop") +
+  default_theme
+```
+
+### Predictive modeling
+
+Create a new object that is a data frame containing new values
+
+```{r}
+
+new_data <- data.frame(speed = c(15, 18, 22))
+```
+
+Now, use the predict() function to generate new outcome values
+
+```{r}
+
+predict(model, new_data)
+
+#round(predict(model, new_data))
+```
