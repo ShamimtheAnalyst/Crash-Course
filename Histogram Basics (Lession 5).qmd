@@ -1,0 +1,299 @@
+---
+title: "Histogram Basics"
+author: "Abdullah Al Shamim"
+format: html
+editor: visual
+---
+
+## Histogram
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+library(tidyverse)
+
+msleep %>%
+  ggplot(aes(x = awake)) +
+  geom_histogram() + 
+  labs(title = "Histogram of Total Sleep",
+       x = "Total Sleep",
+       y = "NULL") +
+  theme_bw()
+```
+
+You can add options to executable code like this
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+msleep %>%
+  ggplot(aes(x = awake)) +
+  geom_histogram(binwidth = 2, fill = "#97B3C6") + 
+  labs(title = "Histogram of Total Sleep",
+       x = "Total Sleep",
+       y = "NULL") +
+  theme_bw()
+
+```
+
+#### A basic histogram
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# Sample data
+set.seed(3)
+x <- rnorm(200)
+
+# Histogram
+hist(x, prob = TRUE)
+```
+
+#### Histogram with normal curve 
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# X-axis grid
+x2 <- seq(min(x), max(x), length = 40)
+
+# Normal curve
+fun <- dnorm(x2, mean = mean(x), sd = sd(x))
+
+# Histogram
+hist(x, prob = TRUE, col = "white",
+     ylim = c(0, max(fun)),
+     main = "Histogram with normal curve")
+lines(x2, fun, col = 2, lwd = 2) 
+ 
+```
+
+#### Histogram with density line 
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# Sample data
+set.seed(3)
+x <- rnorm(200)
+
+# Normal curve
+fun <- dnorm(x2, mean = mean(x), sd = sd(x))
+
+# Histogram
+hist(x, prob = TRUE, ylim = c(0, max(fun)),
+     main = "Histogram with density curve")
+lines(density(x), col = 4, lwd = 2) #lwd = line width
+
+```
+
+#### Histogram with mean line 
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+#install.packages("ggpubr")
+library(ggpubr)
+
+
+# Create some data format
+set.seed(1234)
+men = data.frame(
+  sex = factor(rep(c("F", "M"), each=200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58)))
+head(men, 4)
+
+# Use custom color palette
+# Change outline and fill colors by groups ("sex")
+gghistogram(men, x = "weight",
+            add = "mean", #rug = TRUE,
+            color = "sex", fill = "sex",
+            palette = c("#00AFBB", "#E7B800"))
+
+
+```
+
+### Data preparation
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+set.seed(3)
+x1 <- rnorm(500)
+x2 <- rnorm(500, mean = 3)
+x <- c(x1, x2)
+group <- c(rep("G1", 500), rep("G2", 500))
+
+df <- data.frame(x, group = group)
+
+view(df)
+```
+
+#### a) Grouped histogram with `geom_histogram`
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group)) + 
+  geom_histogram()
+
+```
+
+#### b) Colour
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, colour = group)) + 
+  geom_histogram()
+```
+
+#### c) identity position
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group, colour = group)) + 
+  geom_histogram(alpha = 0.5, position = "identity") 
+
+
+```
+
+#### d) dodge position
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group, colour = group)) + 
+  geom_histogram(position = "dodge") 
+
+
+```
+
+#### e) Histogram by group with custom colors
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group)) + 
+  geom_histogram(colour = "black",
+                 lwd = 0.75,
+                 linetype = 1,
+                 position = "identity") 
+ 
+
+```
+
+#### f) Fill color
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, colour = group)) + 
+  geom_histogram(fill  = "white",
+                 position = "identity") 
+
+```
+
+#### g) Custom border colors for each group
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, colour = group)) + 
+  geom_histogram(fill  = "white",
+                 position = "identity") +
+  scale_color_manual(values = c("blue", "orange")) 
+
+
+```
+
+#### h) Custom fill colors for each group
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group)) + 
+  geom_histogram(color = 1, alpha = 0.75,
+                 position = "identity") +
+  scale_fill_manual(values = c("#8795E8", "#FF6AD5")) 
+
+```
+
+#### i) Legend customization
+
+Custom legend title
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group, colour = group)) + 
+  geom_histogram(alpha = 0.5, position = "identity") + 
+  guides(fill = guide_legend(title = "Title"),
+         colour = guide_legend(title = "Title")) 
+
+
+```
+
+Custom legend labels
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group, colour = group)) + 
+  geom_histogram(alpha = 0.5, position = "identity") + 
+  scale_color_discrete(labels = c("A", "B")) +
+  scale_fill_discrete(labels = c("A", "B")) 
+
+```
+
+Legend position
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group, colour = group)) + 
+  geom_histogram(alpha = 0.5, position = "identity") + 
+  theme(legend.position = "left") 
+
+```
+
+Remove the legend
+
+```{r message= FALSE, error=FALSE, warning=FALSE}
+
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Histogram by group in ggplot2
+ggplot(df, aes(x = x, fill = group, colour = group)) + 
+  geom_histogram(alpha = 0.5, position = "identity") + 
+  theme(legend.position = "none") 
+```
